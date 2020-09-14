@@ -39,8 +39,29 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
 
     int sxObject = 200;
     int syObject = 200;
-    int sxShadow = 220;
-    int syShadow = 220;
+    int sxShadow = sxObject;
+    int syShadow = syObject;
+
+    // shadow offset
+    int cx, cy;
+    cx = sxObject + (wObject / 2);
+    cy = syObject + (hObject / 2);
+
+    int dx, dy;
+    dx = cx - x;
+    dy = cy - y;
+
+    if (abs(dx) > 50) {
+      int sign = dx < 0 ? -1 : 1;
+      dx = 50 * sign;
+    }
+    if (abs(dy) > 50) {
+      int sign = dy < 0 ? -1 : 1;
+      dy = 50 * sign;
+    }
+
+    sxShadow += dx;
+    syShadow += dy;
 
     shadow.copyTo(canvas.rowRange(syShadow, syShadow + hShadow)
                       .colRange(sxShadow, sxShadow + wShadow));
