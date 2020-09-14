@@ -1,0 +1,5 @@
+result/
+video/
+*.o
+main
+*.mp4
