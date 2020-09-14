@@ -33,14 +33,18 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
   float w = float(object.size().width);
   float h = float(object.size().height);
 
+  // move vertices along delta direction
+  // to get dstTri[i]
   Point2f center = offset + Point2f(w / 2.f, h / 2.f);
   // Vec2f delta = center - Point2f(lightPos.x, lightPos.y);
   Vec2f delta = center - Point2f(x, y);
   delta /= norm(delta);
 
+  // scale delta to adjust shadow shape
   float lambda = 0.75f;
   delta *= lambda;
 
+  // compute affine transformation matrix
   Point2f srcTri[3];
   srcTri[0] = Point2f(0.f, 0.f);
   srcTri[1] = Point2f(0.f, 1.f);
@@ -55,8 +59,10 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
 
   warpAffine(shadow, canvas, warpMat, canvas.size());
 
+  // invert image to get a black shadow
   bitwise_not(canvas, canvas);
 
+  // draw object over the shadow
   int sx, sy;
   sx = int(offset.x);
   sy = int(offset.y);
@@ -64,6 +70,7 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
   object.copyTo(canvas.rowRange(sy, sy + object.size().height)
                     .colRange(sx, sx + object.size().width));
 
+  // screenshot
   // circle(canvas, Point(lightPos.x, lightPos.y), 3, iRED, -1);
   //
   // save frame
