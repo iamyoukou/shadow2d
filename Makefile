@@ -7,12 +7,18 @@ LINK=-L/usr/local/Cellar/opencv/4.4.0_2/lib -lopencv_core -lopencv_highgui -lope
 -lopencv_imgproc
 SRC_DIR=/Users/YJ-work/cpp/shadow2d/src
 
-all: main
+all: main test
 
 main: main.o
 	$(CXX) $(LINK) $^ -o $@
 
 main.o: $(SRC_DIR)/main.cpp
+	$(CXX) $(COMPILE) $^ -o $@
+
+test: test.o
+	$(CXX) $(LINK) $^ -o $@
+
+test.o: $(SRC_DIR)/test.cpp
 	$(CXX) $(COMPILE) $^ -o $@
 
 .PHONY: cleanObj cleanImg

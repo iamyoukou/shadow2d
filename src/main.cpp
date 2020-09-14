@@ -26,52 +26,34 @@ string wndName = "2D Shadow";
 void mouseCallback(int event, int x, int y, int flag, void *param) {
   oriCanvas.copyTo(canvas);
 
+  Point2f srcTri[3];
+  srcTri[0] = Point2f(0.f, 0.f);
+  srcTri[1] = Point2f(0.f, 1.f);
+  srcTri[2] = Point2f(1.f, 1.f);
+
+  Point2f dstTri[3];
+  Point2f offset(150.f, 150.f);
+  dstTri[0] = Point2f(0.f, 0.f) + offset;
+  dstTri[1] = Point2f(0.5f, 0.5f) + offset;
+  dstTri[2] = Point2f(1.5f, 0.5f) + offset;
+
+  Mat warpMat = getAffineTransform(srcTri, dstTri);
+
+  warpAffine(shadow, canvas, warpMat, canvas.size());
+
+  bitwise_not(canvas, canvas);
+
+  int sx, sy;
+  sx = int(offset.x);
+  sy = int(offset.y);
+
+  object.copyTo(canvas.rowRange(sy, sy + object.size().height)
+                    .colRange(sx, sx + object.size().width));
+
+  flip(canvas, canvas, 0);
+
   switch (event) {
   case EVENT_MOUSEMOVE:
-
-    // std::cout << "(" << x << ", " << y << ") " << '\n';
-
-    // draw object
-    int hObject = object.size().height;
-    int wObject = object.size().width;
-    int hShadow = shadow.size().height;
-    int wShadow = shadow.size().width;
-
-    int sxObject = 200;
-    int syObject = 200;
-    int sxShadow = sxObject;
-    int syShadow = syObject;
-
-    // shadow offset
-    int cx, cy;
-    cx = sxObject + (wObject / 2);
-    cy = syObject + (hObject / 2);
-
-    int dx, dy;
-    dx = cx - x;
-    dy = cy - y;
-
-    // std::cout << dx << ", " << dy << '\n';
-
-    int threshold = 1000;
-    if (abs(dx) > threshold) {
-      int sign = dx < 0 ? -1 : 1;
-      dx = threshold * sign;
-    }
-    if (abs(dy) > threshold) {
-      int sign = dy < 0 ? -1 : 1;
-      dy = threshold * sign;
-    }
-
-    float scale = 0.1;
-    sxShadow += dx * scale;
-    syShadow += dy * scale;
-
-    shadow.copyTo(canvas.rowRange(syShadow, syShadow + hShadow)
-                      .colRange(sxShadow, sxShadow + wShadow));
-
-    object.copyTo(canvas.rowRange(syObject, syObject + hObject)
-                      .colRange(sxObject, sxObject + wObject));
 
     circle(canvas, Point(x, y), 3, iRED, -1);
 
@@ -90,19 +72,22 @@ void images2video() {
 }
 
 int main(int argc, char const *argv[]) {
-  // create canvas
+  shadow = imread("./res/shadow.png");
+  object = imread("./res/object.png");
+
+  if (shadow.empty()) {
+    cout << "Could not open or find the image!\n" << endl;
+    cout << "Usage: " << argv[0] << " <Input image>" << endl;
+    return -1;
+  }
+
   canvas = Mat(WND_HEIGHT, WND_WIDTH, CV_8UC3, iBG_COLOR);
   oriCanvas = Mat(WND_HEIGHT, WND_WIDTH, CV_8UC3, iBG_COLOR);
   namedWindow(wndName);
   setMouseCallback(wndName, mouseCallback);
 
-  object = imread("./res/object.png");
-  shadow = imread("./res/shadow.png");
-
-  // convert images to video
-  // images2video();
-
   imshow(wndName, canvas);
+
   waitKey(0);
 
   return 0;
