@@ -26,16 +26,27 @@ string wndName = "2D Shadow";
 void mouseCallback(int event, int x, int y, int flag, void *param) {
   oriCanvas.copyTo(canvas);
 
+  Point2f offset(150.f, 150.f);
+  float w = float(object.size().width);
+  float h = float(object.size().height);
+
+  Point2f center = offset + Point2f(w / 2.f, h / 2.f);
+  Point2f light(x, y);
+  Vec2f delta = center - light;
+  delta /= norm(delta);
+
+  float lambda = 1.f;
+  delta *= lambda;
+
   Point2f srcTri[3];
   srcTri[0] = Point2f(0.f, 0.f);
   srcTri[1] = Point2f(0.f, 1.f);
   srcTri[2] = Point2f(1.f, 1.f);
 
   Point2f dstTri[3];
-  Point2f offset(150.f, 150.f);
   dstTri[0] = Point2f(0.f, 0.f) + offset;
-  dstTri[1] = Point2f(0.5f, 0.5f) + offset;
-  dstTri[2] = Point2f(1.5f, 0.5f) + offset;
+  dstTri[1] = dstTri[0] + Point2f(delta[0], delta[1]);
+  dstTri[2] = dstTri[1] + Point2f(1.f, 0.f);
 
   Mat warpMat = getAffineTransform(srcTri, dstTri);
 
