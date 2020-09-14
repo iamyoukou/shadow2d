@@ -22,6 +22,9 @@ using namespace cv;
 Mat canvas, oriCanvas;
 Mat object, shadow;
 string wndName = "2D Shadow";
+int frame = 0;
+Point lightPos(50, 50);
+int simPhase = 0;
 
 void mouseCallback(int event, int x, int y, int flag, void *param) {
   oriCanvas.copyTo(canvas);
@@ -31,11 +34,11 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
   float h = float(object.size().height);
 
   Point2f center = offset + Point2f(w / 2.f, h / 2.f);
-  Point2f light(x, y);
-  Vec2f delta = center - light;
+  // Vec2f delta = center - Point2f(lightPos.x, lightPos.y);
+  Vec2f delta = center - Point2f(x, y);
   delta /= norm(delta);
 
-  float lambda = 1.f;
+  float lambda = 0.75f;
   delta *= lambda;
 
   Point2f srcTri[3];
@@ -61,13 +64,39 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
   object.copyTo(canvas.rowRange(sy, sy + object.size().height)
                     .colRange(sx, sx + object.size().width));
 
-  flip(canvas, canvas, 0);
+  // circle(canvas, Point(lightPos.x, lightPos.y), 3, iRED, -1);
+  //
+  // save frame
+  // flip(canvas, canvas, 0);
+  // imshow(wndName, canvas);
+  // imwrite(format("./result/sim%03d.png", frame++), canvas);
+  // std::cout << "Image saved." << '\n';
+  //
+  // if (simPhase == 0) {
+  //   lightPos.x += 5;
+  //   if (lightPos.x >= 400)
+  //     simPhase++;
+  // } else if (simPhase == 1) {
+  //   lightPos.y += 5;
+  //   if (lightPos.y >= 500)
+  //     simPhase++;
+  // } else if (simPhase == 2) {
+  //   lightPos.x -= 5;
+  //   if (lightPos.x <= 50)
+  //     simPhase++;
+  // } else if (simPhase == 3) {
+  //   lightPos.y -= 5;
+  //   if (lightPos.y <= 50)
+  //     simPhase++;
+  // } else {
+  //   // end;
+  // }
 
   switch (event) {
   case EVENT_MOUSEMOVE:
 
     circle(canvas, Point(x, y), 3, iRED, -1);
-
+    flip(canvas, canvas, 0);
     imshow(wndName, canvas);
     waitKey(1);
 

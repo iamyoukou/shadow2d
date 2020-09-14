@@ -2,4 +2,5 @@ result/
 video/
 *.o
 main
+test
 *.mp4
