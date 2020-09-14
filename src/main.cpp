@@ -20,6 +20,7 @@ using namespace std;
 using namespace cv;
 
 Mat canvas, oriCanvas;
+Mat object, shadow;
 string wndName = "2D Shadow";
 
 void mouseCallback(int event, int x, int y, int flag, void *param) {
@@ -29,6 +30,23 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
   case EVENT_MOUSEMOVE:
 
     // std::cout << "(" << x << ", " << y << ") " << '\n';
+
+    // draw object
+    int hObject = object.size().height;
+    int wObject = object.size().width;
+    int hShadow = shadow.size().height;
+    int wShadow = shadow.size().width;
+
+    int sxObject = 200;
+    int syObject = 200;
+    int sxShadow = 220;
+    int syShadow = 220;
+
+    shadow.copyTo(canvas.rowRange(syShadow, syShadow + hShadow)
+                      .colRange(sxShadow, sxShadow + wShadow));
+
+    object.copyTo(canvas.rowRange(syObject, syObject + hObject)
+                      .colRange(sxObject, sxObject + wObject));
 
     circle(canvas, Point(x, y), 3, iRED, -1);
 
@@ -52,6 +70,9 @@ int main(int argc, char const *argv[]) {
   oriCanvas = Mat(WND_HEIGHT, WND_WIDTH, CV_8UC3, iBG_COLOR);
   namedWindow(wndName);
   setMouseCallback(wndName, mouseCallback);
+
+  object = imread("./res/object.png");
+  shadow = imread("./res/shadow.png");
 
   // convert images to video
   // images2video();
