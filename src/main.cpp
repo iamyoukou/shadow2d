@@ -51,17 +51,21 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
     dx = cx - x;
     dy = cy - y;
 
-    if (abs(dx) > 50) {
+    // std::cout << dx << ", " << dy << '\n';
+
+    int threshold = 1000;
+    if (abs(dx) > threshold) {
       int sign = dx < 0 ? -1 : 1;
-      dx = 50 * sign;
+      dx = threshold * sign;
     }
-    if (abs(dy) > 50) {
+    if (abs(dy) > threshold) {
       int sign = dy < 0 ? -1 : 1;
-      dy = 50 * sign;
+      dy = threshold * sign;
     }
 
-    sxShadow += dx;
-    syShadow += dy;
+    float scale = 0.1;
+    sxShadow += dx * scale;
+    syShadow += dy * scale;
 
     shadow.copyTo(canvas.rowRange(syShadow, syShadow + hShadow)
                       .colRange(sxShadow, sxShadow + wShadow));
