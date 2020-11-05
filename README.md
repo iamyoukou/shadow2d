@@ -3,6 +3,8 @@
 The 2D shadow rendering in [West of Loathing](http://westofloathing.com/) has interested me a lot.
 So, in this project, I try to achieve a similar effect.
 
+![result](./output.gif)
+
 # Method
 
 Each frame is separated into two layers.
@@ -35,7 +37,3 @@ The key is how to design the transformation matrix.
 Different matrix can produce different shadow shapes.
 The one used in the mentioned game is a little different from mine.
 But the basic concept is the same.
-
-# Result
-
-![result](./output.gif)
